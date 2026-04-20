@@ -2,6 +2,7 @@ import { useState } from 'react'
 import IntroAnimation from './components/IntroAnimation'
 import Book from './components/Book'
 import MatrixBackground from './components/MatrixBackground'
+import OrientationLock from './components/OrientationLock'
 import './App.css'
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
 
   return (
     <div className="app-container">
+      <OrientationLock />
       <MatrixBackground />
       {showIntro ? (
         <IntroAnimation onComplete={() => setShowIntro(false)} />

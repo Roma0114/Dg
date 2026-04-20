@@ -16,7 +16,7 @@ export const memories: MemoryPage[] = [
   { id: 6, imageUrl: 'image/20250701_195809.jpg', text: 'Hanım GS\'li' },
   { id: 8, imageUrl: 'image/20250918_131401.jpg', text: 'Genetik bi japonluk var bence ne diyorsun?' },
   { id: 11, imageUrl: 'image/20251122_155016.jpg', text: 'Kafamı her çevirdiğimde seni böyle öpebilirim umarım' },
-  { id: 12, imageUrl: 'image/20251122_155032.jpg', text: 'Gülüşlerin hiç eksik olmadığı bir yıl olsun' },
+  { id: 12, imageUrl: 'image/20251122_155032.jpg', text: '<3' },
   { id: 13, imageUrl: 'image/20251122_211904.jpg', text: 'çokk iyi ya' },
   { id: 14, imageUrl: 'image/20251123_163734.jpg', text: 'Bu araya kaynamış sory' },
   { id: 15, imageUrl: 'image/20251123_163918.jpg', text: '<3' },

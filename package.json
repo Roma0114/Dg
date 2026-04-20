@@ -1,6 +1,7 @@
 {
   "name": "dg",
   "private": true,
+  "homepage": "https://Roma0114.github.io/Dg",
   "version": "0.0.0",
   "type": "module",
   "scripts": {

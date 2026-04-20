@@ -94,7 +94,7 @@ const Book: React.FC = () => {
               <div className="ribbon-line line-2"></div>
             </div>
             <p className="cover-instruction">Tıkla yavrum</p>
-            <img src="/src/image/helbatman.jpg" alt="Hell Batman" className="cover-image" />
+            <img src="image/helbatman.jpg" alt="Hell Batman" className="cover-image" />
           </div>
         );
       } else if (sp.type === 'end') {

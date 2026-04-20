@@ -1,0 +1,226 @@
+.book-container {
+  perspective: 1500px;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  overflow: hidden;
+}
+
+.book {
+  position: relative;
+  width: 350px;
+  height: 450px;
+  transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transform-style: preserve-3d;
+  /* Stacking effect */
+  box-shadow: 
+    0 1px 1px rgba(0,0,0,0.1),
+    0 2px 2px rgba(0,0,0,0.1),
+    0 4px 4px rgba(0,0,0,0.1),
+    0 8px 8px rgba(0,0,0,0.1),
+    0 16px 16px rgba(0,0,0,0.1);
+}
+
+.page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  transform-origin: left;
+  transform-style: preserve-3d;
+  transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  cursor: pointer;
+  user-select: none;
+}
+
+.page.flipped {
+  transform: rotateY(-180deg);
+}
+
+.front, .back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  box-shadow: inset 3px 0 10px rgba(0,0,0,0.1);
+  background-color: #ffffff;
+}
+
+.front {
+  z-index: 2;
+  border-radius: 0 15px 15px 0;
+  border: 1px solid white; /* Changed to white */
+  border-left: none;
+  transform: rotateY(0deg) translateZ(1px); /* translateZ ayrışmayı sağlar */
+}
+
+.back {
+  transform: rotateY(180deg) translateZ(1px); /* translateZ ayrışmayı sağlar */
+  z-index: 1;
+  border-radius: 15px 0 0 15px;
+  border: 1px solid white; /* Changed to white */
+  border-right: none;
+}
+
+.page-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: flex-start;
+  align-items: center;
+  border: 1px solid #f0f0f0;
+  padding: 10px;
+  border-radius: 10px;
+  background: linear-gradient(to right, #fff 95%, #f9f9f9 100%);
+}
+
+/* Remove internal padding/border for cover to allow ribbon to touch the absolute corner */
+.cover .page-content {
+  border: none;
+  padding: 0;
+  background: transparent;
+}
+
+.back .page-content {
+  background: linear-gradient(to left, #fff 95%, #f9f9f9 100%);
+}
+
+.page-image {
+  width: 100%;
+  height: 280px; /* Increased from 200px */
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  border: 4px solid white;
+}
+
+.page-text {
+  font-family: 'Caveat', cursive;
+  font-size: 1.4rem;
+  color: #444;
+  text-align: center;
+  margin-top: auto; /* Pushes text towards the bottom */
+  margin-bottom: 30px;
+  line-height: 1.2;
+  word-wrap: break-word;
+  max-width: 90%;
+}
+
+.page-number {
+  font-size: 0.9rem;
+  color: #bbb;
+  position: absolute;
+  bottom: 10px;
+}
+
+.front .page-number {
+  right: 15px;
+}
+
+.back .page-number {
+  left: 15px;
+}
+
+.cover {
+  background: linear-gradient(135deg, #4a2c2c 0%, #2a1b1b 100%) !important;
+  color: #d4af37;
+  border: 3px solid white !important; /* Outer border made white and thicker */
+}
+
+.cover-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding-top: 80px;
+  position: relative;
+}
+
+.cover-instruction {
+  font-family: 'Caveat', cursive;
+  font-size: 2.5rem;
+  color: #d4af37;
+  margin-bottom: 30px;
+  animation: pulse 2s infinite;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.cover-image {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 15px;
+  border: 3px solid #d4af37;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.corner-ribbon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  overflow: hidden;
+  z-index: 10;
+  border-radius: 0 10px 0 0; /* Matches book corner radius */
+}
+
+.ribbon-line {
+  position: absolute;
+  background: #d4af37;
+  height: 3px;
+  width: 120px;
+  transform: rotate(45deg);
+}
+
+.line-1 {
+  top: 12px;
+  right: -30px;
+}
+
+.line-2 {
+  top: 22px;
+  right: -30px;
+}
+
+.end-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 20px;
+}
+
+.final-message {
+  font-size: 1.8rem !important;
+  line-height: 1.6 !important;
+  color: #4a2c2c !important;
+  margin: 0 !important;
+}
+
+.back-cover-design {
+  font-size: 5rem;
+  color: #d4af37;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: pulse 2s infinite;
+}

@@ -75,8 +75,8 @@ body {
   100% { transform: rotate(90deg); }
 }
 
-/* Sadece dikey ekranlarda (mobil ve tablet) göster */
-@media (min-width: 1367px) {
+/* Sadece dikey mobil ekranlarda göster */
+@media (min-width: 1024px) {
   .orientation-warning {
     display: none;
   }

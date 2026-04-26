@@ -14,11 +14,7 @@ function App() {
       setIsPortrait(window.innerHeight > window.innerWidth)
     }
     window.addEventListener('resize', handleResize)
-    window.addEventListener('orientationchange', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
-      window.removeEventListener('orientationchange', handleResize)
-    }
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   return (

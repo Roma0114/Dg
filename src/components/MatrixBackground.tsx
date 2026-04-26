@@ -16,28 +16,26 @@ const MatrixBackground: React.FC<MatrixBackgroundProps> = ({ color = '#FF107A' }
         if (!ctx) return;
 
         const fontSize = 16;
-        let columns = 0;
         let drops: number[] = [];
 
         const updateDimensions = () => {
             const width = window.innerWidth;
             const height = window.innerHeight;
-            
+
             if (canvas.width !== width || canvas.height !== height) {
                 canvas.width = width;
                 canvas.height = height;
-                
+
                 const newColumns = Math.floor(width / fontSize) + 1; // +1 to ensure we cover the edge
                 const newDrops = Array(newColumns).fill(1);
-                
+
                 // Keep existing drops if possible to avoid reset flickering
                 if (drops.length > 0) {
                     for (let i = 0; i < Math.min(drops.length, newColumns); i++) {
                         newDrops[i] = drops[i];
                     }
                 }
-                
-                columns = newColumns;
+
                 drops = newDrops;
             }
         };

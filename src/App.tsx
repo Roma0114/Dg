@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import IntroAnimation from './components/IntroAnimation'
 import Book from './components/Book'
 import MatrixBackground from './components/MatrixBackground'
@@ -7,28 +7,17 @@ import './App.css'
 
 function App() {
   const [showIntro, setShowIntro] = useState(true)
-  const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth)
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsPortrait(window.innerHeight > window.innerWidth)
-    }
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
 
   return (
     <div className="app-container">
       <OrientationLock />
       <MatrixBackground />
-      {!isPortrait && (
-        showIntro ? (
-          <IntroAnimation onComplete={() => setShowIntro(false)} />
-        ) : (
-          <div className="book-enter">
-            <Book />
-          </div>
-        )
+      {showIntro ? (
+        <IntroAnimation onComplete={() => setShowIntro(false)} />
+      ) : (
+        <div className="book-enter">
+          <Book />
+        </div>
       )}
     </div>
   )

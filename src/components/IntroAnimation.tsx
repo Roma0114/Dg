@@ -11,15 +11,31 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete }) => {
   const [countdown, setCountdown] = useState(3);
   const [phase, setPhase] = useState<'countdown' | 'celebration'>('countdown');
 
+  const triggerBigExplosion = () => {
+    const duration = 3 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 45, spread: 360, ticks: 100, zIndex: 2000 };
+
+    const interval = setInterval(function() {
+      const timeLeft = animationEnd - Date.now();
+      if (timeLeft <= 0) return clearInterval(interval);
+
+      const particleCount = 80 * (timeLeft / duration);
+      confetti({ ...defaults, particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } });
+    }, 200);
+  };
+
   useEffect(() => {
     if (phase === 'countdown') {
-      if (countdown > 0) {
-        const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-        return () => clearTimeout(timer);
-      } else {
-        setPhase('celebration');
-        triggerBigExplosion();
-      }
+      const timer = setTimeout(() => {
+        if (countdown > 1) {
+          setCountdown(countdown - 1);
+        } else {
+          setPhase('celebration');
+          triggerBigExplosion();
+        }
+      }, 1000);
+      return () => clearTimeout(timer);
     }
     // Otomatik geçiş kaldırıldı, artık tıklama bekleniyor.
   }, [countdown, phase]);
@@ -29,20 +45,6 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete }) => {
       setShow(false);
       setTimeout(onComplete, 1000);
     }
-  };
-
-  const triggerBigExplosion = () => {
-    const duration = 3 * 1000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 45, spread: 360, ticks: 100, zIndex: 2000 };
-
-    const interval: any = setInterval(function() {
-      const timeLeft = animationEnd - Date.now();
-      if (timeLeft <= 0) return clearInterval(interval);
-
-      const particleCount = 80 * (timeLeft / duration);
-      confetti({ ...defaults, particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } });
-    }, 200);
   };
 
   return (
@@ -66,6 +68,7 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete }) => {
             alignItems: 'center',
             zIndex: 1000,
             flexDirection: 'column',
+            padding: '16px',
             cursor: phase === 'celebration' ? 'pointer' : 'default'
           }}
         >
@@ -77,7 +80,7 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete }) => {
               exit={{ scale: 2, opacity: 0 }}
               transition={{ duration: 0.8 }}
               style={{
-                fontSize: '6rem',
+                fontSize: 'clamp(3rem, 16vmin, 6rem)',
                 color: '#ffffff',
                 fontFamily: '"Press Start 2P", cursive',
                 textShadow: `
@@ -105,7 +108,7 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete }) => {
                 animate={{ scale: 1, y: 0, opacity: 1 }}
                 transition={{ type: "spring", stiffness: 50, damping: 15, duration: 1.5 }}
                 style={{
-                  fontSize: '3.5rem',
+                  fontSize: 'clamp(2rem, 9vmin, 3.5rem)',
                   textAlign: 'center',
                   color: '#ffffff',
                   fontFamily: '"Caveat", cursive',
@@ -116,15 +119,15 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete }) => {
                 }}
               >
                 Doğum Günün Kutlu Olsun <br /> 
-                <span style={{ color: '#FF107A', fontSize: '4.5rem' }}>Güzellik</span>
+                <span style={{ color: '#FF107A', fontSize: 'clamp(2.6rem, 12vmin, 4.5rem)', textShadow: '0 0 20px rgba(255, 16, 122, 0.6)' }}>Güzellik</span>
               </motion.h1>
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1, duration: 1.5 }}
                 style={{ 
-                  marginTop: '30px', 
-                  fontSize: '1.4rem', 
+                  marginTop: 'clamp(12px, 4vmin, 30px)',
+                  fontSize: 'clamp(1rem, 4.5vmin, 1.4rem)',
                   color: 'rgba(255, 255, 255, 0.8)',
                   letterSpacing: '2px',
                   fontFamily: 'system-ui, -apple-system, sans-serif'
@@ -142,8 +145,8 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete }) => {
                   ease: "easeInOut"
                 }}
                 style={{ 
-                  marginTop: '60px', 
-                  fontSize: '1.8rem', 
+                  marginTop: 'clamp(18px, 7vmin, 60px)',
+                  fontSize: 'clamp(1.3rem, 6vmin, 1.8rem)',
                   color: '#ffffff',
                   fontFamily: '"Caveat", cursive',
                   fontWeight: 'bold',

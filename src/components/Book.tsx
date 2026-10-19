@@ -80,6 +80,10 @@ const Book: React.FC = () => {
 
   const leaves = createLeaves();
 
+  // Kapalıyken ortada, açıkken iki sayfa ortada, tamamen bitince arka kapak ortada
+  const bookShift =
+    flippedPages.length === 0 ? '0' : flippedPages.length === leaves.length ? '100%' : '50%';
+
   const renderPage = (content: PageContent, index: number, side: 'front' | 'back') => {
     const isSpecial = 'type' in content;
     const pageNum = side === 'front' ? index * 2 + 1 : index * 2 + 2;
@@ -94,7 +98,7 @@ const Book: React.FC = () => {
               <div className="ribbon-line line-2"></div>
             </div>
             <p className="cover-instruction">Tıkla yavrum</p>
-            <img src="image/helbatman.jpg" alt="Hell Batman" className="cover-image" />
+            <img src="image/helbatman.jpg" alt="Hell Batman" className="cover-image" draggable={false} />
           </div>
         );
       } else if (sp.type === 'end') {
@@ -105,7 +109,7 @@ const Book: React.FC = () => {
         );
       } else {
         return (
-          <div className="cover-content">
+          <div className="cover-content back-cover-content">
             <div className="back-cover-design">❤️</div>
           </div>
         );
@@ -114,7 +118,7 @@ const Book: React.FC = () => {
       const mp = content as MemoryPage;
       return (
         <>
-          <img src={mp.imageUrl} alt="Memory" className="page-image" />
+          <img src={mp.imageUrl} alt="Memory" className="page-image" draggable={false} decoding="async" />
           <p className="page-text">{mp.text}</p>
           <span className="page-number">{pageNum}</span>
         </>
@@ -124,7 +128,10 @@ const Book: React.FC = () => {
 
   return (
     <div className="book-container">
-      <div className="book" style={{ transform: flippedPages.length > 0 ? 'translateX(50%)' : 'translateX(0)' }}>
+      <div
+        className={`book ${flippedPages.length === leaves.length ? 'finished' : ''}`}
+        style={{ transform: `translateX(${bookShift})` }}
+      >
         {leaves.map((leaf, index) => {
           const isFrontCover = 'type' in leaf.front && (leaf.front.type === 'cover' || leaf.front.type === 'back-cover');
           const isBackCover = 'type' in leaf.back && (leaf.back.type === 'back-cover' || leaf.back.type === 'cover');

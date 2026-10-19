@@ -1,5 +1,14 @@
 .book-container {
-  perspective: 1500px;
+  /* Sayfa genişliği ekrana göre ölçeklenir: kitap açıkken (2 sayfa) genişliğe,
+     kapalıyken yüksekliğe sığacak şekilde. Tüm iç ölçüler --u birimine bağlıdır
+     (sayfa 350px genişliğindeyken 1 --u = 1px). */
+  --page-w: min(400px, 45vw, 68vh);
+  --page-h: calc(var(--page-w) * 9 / 7);
+  --u: calc(var(--page-w) / 350);
+  --paper: #fdf8f0;
+  --gold: #d4af37;
+
+  perspective: calc(1500 * var(--u));
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -9,19 +18,34 @@
   overflow: hidden;
 }
 
+@supports (height: 100dvh) {
+  .book-container {
+    --page-w: min(400px, 45vw, 68dvh);
+    height: 100dvh;
+  }
+}
+
 .book {
   position: relative;
-  width: 350px;
-  height: 450px;
+  width: var(--page-w);
+  height: var(--page-h);
+  font-size: calc(16 * var(--u));
   transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
   transform-style: preserve-3d;
-  /* Stacking effect */
-  box-shadow: 
+  border-radius: 0 calc(15 * var(--u)) calc(15 * var(--u)) 0;
+  /* Stacking effect + yumuşak pembe parıltı */
+  box-shadow:
     0 1px 1px rgba(0,0,0,0.1),
     0 2px 2px rgba(0,0,0,0.1),
     0 4px 4px rgba(0,0,0,0.1),
     0 8px 8px rgba(0,0,0,0.1),
-    0 16px 16px rgba(0,0,0,0.1);
+    0 16px 16px rgba(0,0,0,0.1),
+    0 0 calc(60 * var(--u)) rgba(255, 16, 122, 0.25);
+}
+
+/* Kitap tamamen kapanınca boş kalan sağ taraftaki gölgeyi gizle */
+.book.finished {
+  box-shadow: none;
 }
 
 .page {
@@ -35,10 +59,23 @@
   transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
   cursor: pointer;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .page.flipped {
   transform: rotateY(-180deg);
+}
+
+/* Fareyle üzerine gelince sayfa hafifçe kalkar (dokunmatik ekranlarda yok) */
+@media (hover: hover) {
+  .page:not(.flipped):hover {
+    transform: rotateY(-3deg);
+  }
+
+  .page.flipped:hover {
+    transform: rotateY(-177deg);
+  }
 }
 
 .front, .back {
@@ -51,25 +88,27 @@
   backface-visibility: hidden;
   display: flex;
   flex-direction: column;
-  padding: 15px;
-  box-shadow: inset 3px 0 10px rgba(0,0,0,0.1);
-  background-color: #ffffff;
+  padding: calc(15 * var(--u));
+  background-color: var(--paper);
 }
 
+/* Cilt tarafında hafif gölge: kitap ortadan açılıyormuş hissi verir */
 .front {
   z-index: 2;
-  border-radius: 0 15px 15px 0;
-  border: 1px solid white; /* Changed to white */
+  border-radius: 0 calc(15 * var(--u)) calc(15 * var(--u)) 0;
+  border: 1px solid white;
   border-left: none;
+  background-image: linear-gradient(to right, rgba(0,0,0,0.14) 0%, rgba(0,0,0,0.04) 4%, rgba(0,0,0,0) 9%);
   transform: rotateY(0deg) translateZ(1px); /* translateZ ayrışmayı sağlar */
 }
 
 .back {
   transform: rotateY(180deg) translateZ(1px); /* translateZ ayrışmayı sağlar */
   z-index: 1;
-  border-radius: 15px 0 0 15px;
-  border: 1px solid white; /* Changed to white */
+  border-radius: calc(15 * var(--u)) 0 0 calc(15 * var(--u));
+  border: 1px solid white;
   border-right: none;
+  background-image: linear-gradient(to left, rgba(0,0,0,0.14) 0%, rgba(0,0,0,0.04) 4%, rgba(0,0,0,0) 9%);
 }
 
 .page-content {
@@ -78,10 +117,9 @@
   height: 100%;
   justify-content: flex-start;
   align-items: center;
-  border: 1px solid #f0f0f0;
-  padding: 10px;
-  border-radius: 10px;
-  background: linear-gradient(to right, #fff 95%, #f9f9f9 100%);
+  border: 1px solid rgba(160, 120, 80, 0.15);
+  padding: calc(10 * var(--u));
+  border-radius: calc(10 * var(--u));
 }
 
 /* Remove internal padding/border for cover to allow ribbon to touch the absolute corner */
@@ -91,50 +129,70 @@
   background: transparent;
 }
 
-.back .page-content {
-  background: linear-gradient(to left, #fff 95%, #f9f9f9 100%);
-}
-
+/* Polaroid görünümü: fotoğraflar hafif eğik, beyaz çerçeveli */
 .page-image {
   width: 100%;
-  height: 280px; /* Increased from 200px */
+  height: calc(280 * var(--u));
+  flex-shrink: 0;
   object-fit: cover;
-  border-radius: 8px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-  border: 4px solid white;
+  border-radius: calc(4 * var(--u));
+  border: calc(6 * var(--u)) solid white;
+  box-shadow:
+    0 calc(10 * var(--u)) calc(20 * var(--u)) rgba(0,0,0,0.15),
+    0 calc(2 * var(--u)) calc(4 * var(--u)) rgba(0,0,0,0.08);
+  transform: rotate(-1.2deg);
+  -webkit-user-drag: none;
+}
+
+.back .page-image {
+  transform: rotate(1.2deg);
 }
 
 .page-text {
   font-family: 'Caveat', cursive;
-  font-size: 1.4rem;
-  color: #444;
+  font-size: 1.4em;
+  color: #4a3b3b;
   text-align: center;
   margin-top: auto; /* Pushes text towards the bottom */
-  margin-bottom: 30px;
+  margin-bottom: calc(30 * var(--u));
   line-height: 1.2;
   word-wrap: break-word;
   max-width: 90%;
 }
 
 .page-number {
-  font-size: 0.9rem;
-  color: #bbb;
+  font-family: 'Caveat', cursive;
+  font-size: 1em;
+  color: #b9a99a;
   position: absolute;
-  bottom: 10px;
+  bottom: calc(10 * var(--u));
 }
 
 .front .page-number {
-  right: 15px;
+  right: calc(15 * var(--u));
 }
 
 .back .page-number {
-  left: 15px;
+  left: calc(15 * var(--u));
 }
 
 .cover {
   background: linear-gradient(135deg, #4a2c2c 0%, #2a1b1b 100%) !important;
-  color: #d4af37;
-  border: 3px solid white !important; /* Outer border made white and thicker */
+  color: var(--gold);
+  border: calc(3 * var(--u)) solid white !important;
+}
+
+/* Kapakta altın iç çerçeve */
+.cover::after {
+  content: '';
+  position: absolute;
+  inset: calc(12 * var(--u));
+  border: 1px solid rgba(212, 175, 55, 0.55);
+  outline: 1px solid rgba(212, 175, 55, 0.25);
+  outline-offset: calc(4 * var(--u));
+  border-radius: calc(8 * var(--u));
+  pointer-events: none;
+  z-index: 0;
 }
 
 .cover-content {
@@ -144,26 +202,34 @@
   align-items: center;
   height: 100%;
   width: 100%;
-  padding-top: 80px;
+  padding-top: calc(80 * var(--u));
   position: relative;
+}
+
+.back-cover-content {
+  justify-content: center;
+  padding-top: 0;
 }
 
 .cover-instruction {
   font-family: 'Caveat', cursive;
-  font-size: 2.5rem;
-  color: #d4af37;
-  margin-bottom: 30px;
+  font-size: 2.5em;
+  color: var(--gold);
+  margin-bottom: calc(30 * var(--u));
   animation: pulse 2s infinite;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 .cover-image {
-  width: 220px;
-  height: 220px;
+  width: calc(220 * var(--u));
+  height: calc(220 * var(--u));
   object-fit: cover;
-  border-radius: 15px;
-  border: 3px solid #d4af37;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  border-radius: calc(15 * var(--u));
+  border: calc(3 * var(--u)) solid var(--gold);
+  box-shadow:
+    0 calc(10 * var(--u)) calc(25 * var(--u)) rgba(0,0,0,0.5),
+    0 0 calc(20 * var(--u)) rgba(212, 175, 55, 0.25);
+  -webkit-user-drag: none;
 }
 
 @keyframes pulse {
@@ -176,29 +242,29 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 80px;
-  height: 80px;
+  width: calc(80 * var(--u));
+  height: calc(80 * var(--u));
   overflow: hidden;
   z-index: 10;
-  border-radius: 0 10px 0 0; /* Matches book corner radius */
+  border-radius: 0 calc(10 * var(--u)) 0 0; /* Matches book corner radius */
 }
 
 .ribbon-line {
   position: absolute;
-  background: #d4af37;
-  height: 3px;
-  width: 120px;
+  background: var(--gold);
+  height: calc(3 * var(--u));
+  width: calc(120 * var(--u));
   transform: rotate(45deg);
 }
 
 .line-1 {
-  top: 12px;
-  right: -30px;
+  top: calc(12 * var(--u));
+  right: calc(-30 * var(--u));
 }
 
 .line-2 {
-  top: 22px;
-  right: -30px;
+  top: calc(22 * var(--u));
+  right: calc(-30 * var(--u));
 }
 
 .end-content {
@@ -206,21 +272,29 @@
   justify-content: center;
   align-items: center;
   height: 100%;
-  padding: 20px;
+  padding: calc(20 * var(--u));
 }
 
 .final-message {
-  font-size: 1.8rem !important;
+  font-size: 1.8em !important;
   line-height: 1.6 !important;
   color: #4a2c2c !important;
   margin: 0 !important;
+  max-width: 100%;
 }
 
 .back-cover-design {
-  font-size: 5rem;
-  color: #d4af37;
+  font-size: 5em;
+  color: var(--gold);
   display: flex;
   justify-content: center;
   align-items: center;
-  animation: pulse 2s infinite;
+  animation: heartbeat 1.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 calc(12 * var(--u)) rgba(255, 16, 122, 0.5));
+}
+
+@keyframes heartbeat {
+  0%, 40%, 100% { transform: scale(1); }
+  20% { transform: scale(1.12); }
+  60% { transform: scale(1.06); }
 }
